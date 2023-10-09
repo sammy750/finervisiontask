@@ -1,4 +1,4 @@
-This project combines a React frontend and a Node.js backend in a single directory for easy management. It allows you to streamline your development workflow and manage dependencies efficiently.
+This project combines a React frontend and a Node.js backend.
 
 To get started with this project, follow these steps:
 

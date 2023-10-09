@@ -5,6 +5,9 @@ import GlobalStyle from "./global-style";
 import Step1 from './Accordion/Step1';
 import Step2 from "./Accordion/Step2";
 import Step3 from "./Accordion/Step3";
+import { AvailableFields } from "./Accordion/types";
+import type { FormData } from './types';
+import formInitialState from "./constants";
 
 const Container = styled.main`
   position: relative;
@@ -77,21 +80,6 @@ const AccordionContent = styled.p`
   height: auto;
 `;
 
-const sampleAccordionData: AccordionItemProps[] = [
-  {
-    title: "Step 1: Your details",
-    content: <Step1 />
-  },
-  {
-    title: "Step 2: More comments",
-    content: <Step2 />
-  },
-  {
-    title: "Step 3: Final comments",
-    content: <Step3 />
-  }
-];
-
 interface AccordionItemProps {
   title: string;
   content: React.ReactNode; // Updated type to allow any valid React element
@@ -112,44 +100,75 @@ const AccordionItems: React.FC<{
   setBodyHeight,
   bodyHeight,
 }) => {
-  return (
-    <>
-      {accordionContent.map(({ title, content }, i) => (
-        <AccordionItem key={`accordion-item-${i}`}>
-          <AccordionTitle
-            onClick={() => {
-              setCurrentAccordion(i);
-              const refCurrent = refs[i].current;
-              if (refCurrent) {
-                setBodyHeight(refCurrent.clientHeight);
-                console.log(refCurrent.clientHeight);
-              }
-            }}
-          >
-            {title}
-          </AccordionTitle>
-          <AccordionBody active={currentAccordion === i} bodyHeight={bodyHeight}>
-            <AccordionContent ref={refs[i]}>{content}</AccordionContent>
-          </AccordionBody>
-        </AccordionItem>
-      ))}
-    </>
-  );
-};
+    return (
+      <>
+        {accordionContent.map(({ title, content }, i) => (
+          <AccordionItem key={`accordion-item-${i}`}>
+            <AccordionTitle
+              onClick={() => {
+                setCurrentAccordion(i);
+                const refCurrent = refs[i].current;
+                if (refCurrent) {
+                  setBodyHeight(refCurrent.clientHeight);
+                  console.log(refCurrent.clientHeight);
+                }
+              }}
+            >
+              {title}
+            </AccordionTitle>
+            <AccordionBody active={currentAccordion === i} bodyHeight={bodyHeight}>
+              <AccordionContent ref={refs[i]}>{content}</AccordionContent>
+            </AccordionBody>
+          </AccordionItem>
+        ))}
+      </>
+    );
+  };
+
 
 
 export default function App() {
 
-  
+
   const [currentAccordion, setCurrentAccordion] = useState<number>(0);
   const [bodyHeight, setBodyHeight] = useState<number>(0);
+  const [formData, setFormData] = useState<FormData>(formInitialState)
 
   const item0 = useRef<HTMLDivElement>(null);
   const item1 = useRef<HTMLDivElement>(null);
   const item2 = useRef<HTMLDivElement>(null);
 
+  const updateFormData = (fieldName: AvailableFields, fieldValue: string) => {
+    setFormData((prev) => {
+      return {
+        ...prev,
+        [fieldName]: fieldValue
+      }
+    })
+  }
+
 
   const refs = [item0, item1, item2];
+  const accordionCommonProps = {
+    formData, updateFormData, setCurrentAccordion
+  }
+
+  const accordionData: AccordionItemProps[] = [
+    {
+      title: "Step 1: Your details",
+      content: <Step1 {...accordionCommonProps} />
+    },
+    {
+      title: "Step 2: More comments",
+      content: <Step2 {...accordionCommonProps} />
+    },
+    {
+      title: "Step 3: Final comments",
+      content: <Step3 {...accordionCommonProps} />
+    }
+  ];
+
+  console.log('DEBUG formData', formData);
 
   return (
     <>
@@ -160,7 +179,7 @@ export default function App() {
             <AccordionContainer>
               <AccordionInner>
                 <AccordionItems
-                  accordionContent={sampleAccordionData}
+                  accordionContent={accordionData}
                   refs={refs}
                   currentAccordion={currentAccordion}
                   setCurrentAccordion={setCurrentAccordion}

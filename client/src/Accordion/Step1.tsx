@@ -3,71 +3,68 @@ import axios from 'axios';
 import styled from 'styled-components';
 import { RootContainer, FlexContainer, Input, Button, InputBox, Label } from './CommontStyle';
 import 'font-awesome/css/font-awesome.min.css';
+import { StepProps, FieldNames } from './types';
+import getInputProps from './helpers';
 
-const Step1 = () => {
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
-    const [emailAddress, setEmailAddress] = useState("");
+const Step1 = ({ formData, updateFormData, setCurrentAccordion }: StepProps) => {
+    const { firstName, surName, email } = formData;
     const [error, setError] = useState("");
 
     function isValidEmail(emailAddress: string) {
         return /\S+@\S+\.\S+/.test(emailAddress);
     }
 
-    const handleChangeEmail = (event: ChangeEvent<HTMLInputElement>) => {
-        if (!isValidEmail(event.target.value)) {
+    const callNext = () => {
+        if (email && !isValidEmail(email)) {
             setError('Email is invalid');
-        } else {
-            setError("");
+            return;
         }
-        setEmailAddress(event.target.value);
-    }
 
-    const handleStep1Next = () => {
-        if (!firstName || !lastName || !emailAddress) {
+        if (!formData || !surName || !email) {
             alert("Please fill in all the fields.");
             return;
         }
+        setCurrentAccordion(1);
     }
 
     return (
         <RootContainer>
             <FlexContainer>
                 <InputBox>
-                    <Label htmlFor="firstName">First Name</Label>
+                    <Label htmlFor={FieldNames.FIRST_NAME}>First Name</Label>
                     <Input
-                        type="text"
-                        name="firstName"
-                        id="firstName"
-                        value={firstName}
-                        onChange={event => setFirstName(event.target.value)}
+                        {...getInputProps(
+                            FieldNames.FIRST_NAME,
+                            formData[FieldNames.FIRST_NAME],
+                            updateFormData
+                        )}
                     />
                 </InputBox>
                 <InputBox>
-                    <Label htmlFor="lastName">Last Name</Label>
+                    <Label htmlFor={FieldNames.SURNAME}>Last Name</Label>
                     <Input
-                        type="text"
-                        name="lastName"
-                        id="lastName"
-                        value={lastName}
-                        onChange={event => setLastName(event.target.value)}
+                        {...getInputProps(
+                            FieldNames.SURNAME,
+                            formData[FieldNames.SURNAME],
+                            updateFormData
+                        )}
                     />
                 </InputBox>
             </FlexContainer>
             <FlexContainer>
                 <InputBox>
-                    <Label htmlFor="emailAddress">Email Address</Label>
+                    <Label htmlFor={FieldNames.EMAIL}>Email Address</Label>
                     <Input
-                        type="text"
-                        name="emailAddress"
-                        id="emailAddress"
-                        value={emailAddress}
-                        onChange={handleChangeEmail}
+                        {...getInputProps(
+                            FieldNames.EMAIL,
+                            formData[FieldNames.EMAIL],
+                            updateFormData
+                        )}
                     />
                     {error && <h2 style={{ color: 'red', fontSize: "15px" }}>{error}</h2>}
                 </InputBox>
             </FlexContainer>
-            <Button onClick={handleStep1Next}>Next <i className="fa fa-angle-right"></i> </Button>
+            <Button onClick={callNext}>Next <i className="fa fa-angle-right"></i> </Button>
         </RootContainer>
     );
 };

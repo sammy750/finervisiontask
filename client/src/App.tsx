@@ -110,7 +110,6 @@ const AccordionItems: React.FC<{
                 const refCurrent = refs[i].current;
                 if (refCurrent) {
                   setBodyHeight(refCurrent.clientHeight);
-                  console.log(refCurrent.clientHeight);
                 }
               }}
             >
@@ -168,8 +167,7 @@ export default function App() {
     }
   ];
 
-  console.log('DEBUG formData', formData);
-
+  
   return (
     <>
       <GlobalStyle />
